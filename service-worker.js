@@ -1,4 +1,4 @@
-const CACHE_NAME = "index-radio-shared-v2";
+const CACHE_NAME = "index-radio-shared-v3";
 const ASSETS = [
   "./",
   "./index.html",
