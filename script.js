@@ -43,6 +43,7 @@ function fillRadios() {
 function bindEvents() {
   $("entryForm").addEventListener("submit", addEntry);
   $("radioInput").addEventListener("change", updateLastInfo);
+  $("dateInput").addEventListener("change", updateLastInfo);
   $("refreshBtn").addEventListener("click", loadRecords);
   $("unlockBtn").addEventListener("click", unlockAdmin);
   $("logoutBtn").addEventListener("click", lockAdmin);
@@ -133,8 +134,7 @@ async function addEntry(event) {
     return;
   }
 
-  const last = getLastRecordForRadio(radio);
-  if (last && index < Number(last.index)) {
+  if (!isIndexChronological(date, radio, index)) {
     setMessage("Index erroné", "error");
     return;
   }
@@ -157,10 +157,44 @@ function getLastRecordForRadio(radio, excludeId = "") {
   return list[list.length - 1] || null;
 }
 
+function getPreviousRecordForRadio(radio, date, excludeId = "") {
+  const list = records
+    .filter((r) => r.radio === radio && r.id !== excludeId && r.date < date)
+    .sort((a, b) => (a.date || "").localeCompare(b.date || "") || (a.createdAt || "").localeCompare(b.createdAt || ""));
+  return list[list.length - 1] || null;
+}
+
+function getNextRecordForRadio(radio, date, excludeId = "") {
+  return records
+    .filter((r) => r.radio === radio && r.id !== excludeId && r.date > date)
+    .sort((a, b) => (a.date || "").localeCompare(b.date || "") || (a.createdAt || "").localeCompare(b.createdAt || ""))[0] || null;
+}
+
+function isIndexChronological(date, radio, index, excludeId = "") {
+  const previous = getPreviousRecordForRadio(radio, date, excludeId);
+  if (previous && index < Number(previous.index)) return false;
+
+  const next = getNextRecordForRadio(radio, date, excludeId);
+  if (next && index > Number(next.index)) return false;
+
+  return true;
+}
+
 function updateLastInfo() {
   const radio = $("radioInput").value;
-  const last = radio ? getLastRecordForRadio(radio) : null;
-  $("lastInfo").textContent = last ? `Dernier index ${radio}: ${last.index} (${formatDate(last.date)})` : "Dernier index: —";
+  const date = $("dateInput").value || todayISO();
+  const previous = radio ? getPreviousRecordForRadio(radio, date) : null;
+  const next = radio ? getNextRecordForRadio(radio, date) : null;
+
+  if (previous && next) {
+    $("lastInfo").textContent = `Entre ${previous.index} (${formatDate(previous.date)}) et ${next.index} (${formatDate(next.date)})`;
+  } else if (previous) {
+    $("lastInfo").textContent = `Dernier index avant cette date ${radio}: ${previous.index} (${formatDate(previous.date)})`;
+  } else if (next) {
+    $("lastInfo").textContent = `Premier index après cette date ${radio}: ${next.index} (${formatDate(next.date)})`;
+  } else {
+    $("lastInfo").textContent = "Dernier index: —";
+  }
 }
 
 function renderRecords() {
@@ -243,12 +277,7 @@ async function editRecord(record) {
     return;
   }
 
-  const previous = records
-    .filter((r) => r.radio === newRadio && r.id !== record.id && r.date <= newDate)
-    .sort((a, b) => (a.date || "").localeCompare(b.date || "") || (a.createdAt || "").localeCompare(b.createdAt || ""))
-    .pop();
-
-  if (previous && newIndex < Number(previous.index)) {
+  if (!isIndexChronological(newDate, newRadio, newIndex, record.id)) {
     setMessage("Index erroné", "error");
     return;
   }

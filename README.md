@@ -1,47 +1,26 @@
-# Index Compteur Radio — version partagée
+# Index Compteur Radio — Google Sheets partagé
 
-Application PWA pour saisir les index des compteurs des radios privées depuis plusieurs téléphones.
+Application PWA mobile pour saisir les index des compteurs électriques des radios privées.
 
-## Important
+## Version fiche Excel
 
-Cette version utilise Google Sheets comme base de données centrale.
+La Google Sheet est organisée exactement comme une fiche:
 
-Quand une personne ajoute un index depuis son téléphone, l'admin ouvre l'application depuis un autre téléphone, appuie sur Actualiser, et voit la nouvelle ligne.
+- Titre: Relevé du compteur d'électricité de Radio
+- Sous-titre: Au centre émetteur de Figuig
+- Colonnes: Date | Aswat | Med Radio | Medina FM | Medi1 | Cap Radio | Chada FM | HIT RADIO | MFM
 
-## Fichiers
+## Fonctionnement
 
-- `index.html`
-- `style.css`
-- `script.js`
-- `manifest.json`
-- `service-worker.js`
-- `icon.svg`
-- `Code.gs` : backend Google Apps Script
-- `google-sheet-template.xlsx` : modèle de sheet
-- `ETAPES_TELEPHONE.md` : étapes pour installation depuis téléphone
+- La date est remplie avec aujourd'hui mais elle est modifiable.
+- L'utilisateur choisit Radio et entre Index.
+- Si l'index n'est pas logique par rapport aux dates précédentes/suivantes de la même radio, l'application affiche: Index erroné.
+- Plusieurs téléphones partagent la même Google Sheet.
+- Admin PIN par défaut: 2026.
 
-## Radios
+## Mise à jour
 
-- Aswat
-- Med Radio
-- Medina FM
-- Medi1
-- Cap Radio
-- Chada FM
-- HIT RADIO
-- MFM
-
-## Validation
-
-- Date automatique.
-- Radio obligatoire.
-- Index obligatoire.
-- Index négatif interdit.
-- Si le nouvel index est inférieur au dernier index de la même radio: `Index erroné`.
-- Même Date + même Radio interdit en double.
-
-## Export Excel
-
-Le bouton admin `Télécharger Excel` génère une fiche Excel compatible avec:
-
-`Date | Aswat | Med Radio | Medina FM | Medi1 | Cap Radio | Chada FM | HIT RADIO | MFM`
+1. Remplacer `Code.gs` dans Apps Script.
+2. Déployer une nouvelle version du Web App.
+3. Remplacer `index.html` et `script.js` dans GitHub.
+4. Faire refresh du lien GitHub Pages.
