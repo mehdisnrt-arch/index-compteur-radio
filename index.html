@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Index Radio">
+  <title>Index Compteur Radio</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">Centre émetteur de Figuig</p>
+      <h1>Index Compteur Radio</h1>
+      <p class="subtitle">Saisie partagée entre plusieurs téléphones</p>
+    </div>
+    <button id="refreshBtn" class="icon-btn" type="button" title="Actualiser">↻</button>
+  </header>
+
+  <main class="container">
+    <section id="setupWarning" class="alert warning hidden">
+      <strong>Configuration manquante.</strong>
+      Application connectée à Google Sheets.
+    </section>
+
+    <section id="message" class="message hidden"></section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>Nouvelle saisie</h2>
+        <span id="syncStatus" class="badge">Synchronisation</span>
+      </div>
+
+      <form id="entryForm" class="form-grid">
+        <label>
+          <span>Date</span>
+          <input id="dateInput" name="date" type="date" readonly required>
+        </label>
+
+        <label>
+          <span>Radio</span>
+          <select id="radioInput" name="radio" required>
+            <option value="">Choisir radio</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Index</span>
+          <input id="indexInput" name="index" type="number" inputmode="numeric" min="0" step="1" placeholder="Entrer index" required>
+        </label>
+
+        <div id="lastInfo" class="last-info">Dernier index: —</div>
+
+        <button class="primary" type="submit">Enregistrer</button>
+      </form>
+    </section>
+
+    <section class="card admin-card">
+      <div class="section-title">
+        <h2>Admin</h2>
+        <span id="adminState" class="badge muted">Verrouillé</span>
+      </div>
+
+      <div class="admin-row">
+        <input id="pinInput" type="password" inputmode="numeric" placeholder="PIN admin">
+        <button id="unlockBtn" type="button">Déverrouiller</button>
+      </div>
+
+      <div id="adminTools" class="admin-tools hidden">
+        <button id="exportBtn" type="button">Télécharger Excel</button>
+        <button id="exportMonthBtn" type="button">Excel du mois</button>
+        <button id="logoutBtn" type="button" class="secondary">Verrouiller</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>Historique</h2>
+        <span id="countBadge" class="badge muted">0</span>
+      </div>
+
+      <div class="search-row">
+        <input id="searchInput" type="search" placeholder="Rechercher date ou radio">
+        <button id="clearSearchBtn" type="button" class="secondary">Effacer</button>
+      </div>
+
+      <div id="recordsList" class="records"></div>
+    </section>
+  </main>
+
+  <template id="recordTemplate">
+    <article class="record-card">
+      <div class="record-main">
+        <div>
+          <strong class="record-radio"></strong>
+          <span class="record-date"></span>
+        </div>
+        <div class="record-index"></div>
+      </div>
+      <div class="record-actions hidden">
+        <button class="edit-btn" type="button">Modifier</button>
+        <button class="delete-btn danger" type="button">Supprimer</button>
+      </div>
+    </article>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
